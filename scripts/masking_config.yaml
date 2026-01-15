@@ -1,0 +1,19 @@
+sensitive_keys:
+  - "sintering_temp"
+  - "pressure"
+  - "ionic conductivity"
+  - "power conversion efficiency"
+  - "binding affinity Ki"
+
+sensitive_terms:
+  - "PLT-X9"
+  - "garnet-type"
+  - "lithium volatilization"
+  - "perovskite"
+  - "kinase inhibitor"
+
+token_map:
+  "PLT-X9": "SECRET_MATERIAL_A"
+  "garnet-type": "STRUCTURE_TYPE_1"
+  "perovskite": "SOLAR_MATERIAL_B"
+  "kinase inhibitor": "DRUG_CANDIDATE_X"

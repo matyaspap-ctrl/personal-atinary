@@ -16,6 +16,10 @@ from dotenv import load_dotenv
 from langchain_aws import ChatBedrock
 from langchain_core.prompts import ChatPromptTemplate
 
+# [NEW] Import the security modules
+from masking_service import MaskingService
+from monitoring import SecureMonitoringCallback
+
 load_dotenv()
 
 
@@ -135,11 +139,19 @@ class BOAssistant:
 
     def __init__(self, settings: BedrockSettings | None = None):
         self.settings = settings or BedrockSettings()
+        
+        # [NEW] Initialize the Masking Service and Callback
+        # We assume masking_config.yaml exists in the same directory
+        self.masker = MaskingService("masking_config.yaml")
+        self.secure_callback = SecureMonitoringCallback(self.masker)
+
         self.llm = ChatBedrock(
             model_id=self.settings.bedrock_model_id,
             region_name=self.settings.bedrock_region,
             model_kwargs={"temperature": 0.1},
             config=self.settings.get_boto_config(),
+            # [NEW] Attach the secure callback to the LLM
+            callbacks=[self.secure_callback]
         )
         self.chain = PROMPT | self.llm
 
@@ -170,6 +182,12 @@ class BOAssistant:
 # =============================================================================
 
 if __name__ == "__main__":
+    # [NEW] Quick check to prevent crashing if config is missing
+    if not os.path.exists("masking_config.yaml"):
+        print("WARNING: masking_config.yaml not found. Creating default...")
+        with open("masking_config.yaml", "w") as f:
+            f.write("sensitive_keys: []\nsensitive_terms: []\ntoken_map: {}")
+
     assistant = BOAssistant()
 
     # =========================================================================
