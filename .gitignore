@@ -1,0 +1,12 @@
+.env
+uv.lock
+poetry.lock
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+env/
+.DS_Store
